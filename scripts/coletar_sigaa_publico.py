@@ -60,6 +60,10 @@ def list_records(tree,kind,who,evidence):
   title=texts[1] if len(texts)>1 else first[m.end():].strip();area=texts[2] if len(texts)>2 else ''
   if not title:continue
   links=[urllib.parse.urljoin(evidence['final_url'],a.attrs.get('href','')) for a in tr.find('a') if a.attrs.get('href') and not a.attrs.get('href').startswith(('javascript:','#'))]
+  if kind=='extension':
+   for a in tr.find('a'):
+    am=re.search(r"'idAtividadeExtensaoSelecionada'\s*:\s*'(\d+)'",a.attrs.get('onclick',''))
+    if am:links.append('https://sigaa.unemat.br/sigaa/link/public/extensao/visualizacaoAcaoExtensao/'+am[1])
   records.append({'id':code,'year':int(code.rsplit('-',1)[-1]),'title':title,'area':area,'kind':kind,'faculty_key':who['key'],'faculty_name':who['name'],'participation_evidence':'Projeto/ação listado na página pública deste docente','source_url':evidence['url'],'collected_at':evidence['collected_at'],'snapshot_sha256':evidence['sha256'],'details_urls':links})
  return records
 def collect_doc(who,out):
